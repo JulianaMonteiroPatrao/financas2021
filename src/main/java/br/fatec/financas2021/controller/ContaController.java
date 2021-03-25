@@ -15,35 +15,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.fatec.financas2021.model.Conta;
-import br.fatec.financas2021.service.ContaService;
+import br.fatec.financas2021.services.ContaService;
 
 @RestController
 @RequestMapping("/contas")
-public class ContaController {
+public class ContaController implements ControllerInterface<Conta> {
     
     @Autowired
     private ContaService service;
 
+    @Override
     @GetMapping
     public ResponseEntity<List<Conta>> getAll() {
-        return ResponseEntity.ok(service.findAll());
+        return ResponseEntity.ok(service.FindAll());
     }
 
+    @Override
     @GetMapping(value = "/{id}")
     public ResponseEntity<?> get(@PathVariable("id") Long id) {
-        Conta _conta = service.find(id);
+        Conta _conta = service.FindById(id);
         if (_conta != null) {
             return ResponseEntity.ok(_conta);
         }
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @Override
     @PostMapping
     public ResponseEntity<Conta> post(@RequestBody Conta conta) {
         service.create(conta);
         return ResponseEntity.ok(conta);
     }
 
+    @Override
     @PutMapping
     public ResponseEntity<?> put(@RequestBody Conta conta) {
         if (service.update(conta)) {
@@ -52,6 +56,7 @@ public class ContaController {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }
 
+    @Override
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<?> delete(@PathVariable("id") Long id) {
         if (service.delete(id)) {
